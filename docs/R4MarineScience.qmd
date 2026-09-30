@@ -3,3 +3,78 @@ title: "MB5370 R4MarineScience"
 author: "Kylar Duffy"
 format: html
 ---
+
+## Workshop 1 R for Marine Science data cleaning
+
+```{r}
+#| message: false
+
+#| warning: false
+
+# Execute workshop 1 R for Marine Science data cleaning code
+
+source("../code/R4MarineScienceW1.R") 
+```
+
+## Wrangling and Plotting in Parallel
+
+### Mean Penguin Body Mass by Species and Island and Penguin Body Mass Across Species and Islands
+
+```{r}
+#| message: false
+
+#| warning: false
+
+penguins |>
+  group_by(species, island) |>
+  summarise(
+    mean_body_mass = mean(body_mass_g, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+penguins |>
+  ggplot(aes(x = species,
+             y = body_mass_g,
+             fill = island)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Dream" = "turquoise3", "Torgersen" = "olivedrab", "Biscoe" = "sienna2")) +
+  labs(
+    title = "Penguin Body Mass Distribution by Species and Island",
+    x = "Species",
+    y = "Body Mass (g)") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(color = "black"))
+```
+
+### Experiment with swapping standard deviation for standard error 
+
+```{r}
+mass_compare_plot2 <- penguins |> 
+  group_by(species, island) |>
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    sd_mass = sd(body_mass_g, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  mutate(
+    se_mass = sd_mass / sqrt(n)
+  )
+
+mass_compare_plotSE <- mass_compare_plot2 |>
+  ggplot(aes(x = species, y = mean_mass, colour = island)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = mean_mass - se_mass,
+                    ymax = mean_mass + se_mass),
+                width = 0.2) + 
+  labs(title = "Mean Body Mass by Species and Island",
+       subtitle = "Error bars represent standard deviation",
+       y = "Mean Body Mass (g)",
+       x = "Species") +
+  theme_minimal()
+
+mass_compare_plotSE
+```
+
