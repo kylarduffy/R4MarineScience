@@ -162,5 +162,29 @@ mass_compare_plot2 <- penguins |>
   )
 mass_compare_plot2
 
+mass_compare_plotSE <- mass_compare_plot2 |>
+  ggplot(aes(x = species, y = mean_mass, colour = island)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = mean_mass - se_mass,
+                    ymax = mean_mass + se_mass),
+                width = 0.2) + 
+  labs(title = "Mean Body Mass by Species and Island",
+       subtitle = "Error bars represent standard deviation",
+       y = "Mean Body Mass (g)",
+       x = "Species") +
+  theme_minimal()
 
+mass_compare_plotSE
+
+# Exporting our collapsed summary table as a universal flat text file
+# write_csv(biological_signal, "outputs/tables/penguin_species_mass_summary.csv")
+
+# Saving as a native R binary file
+# saveRDS(biological_signal, "Rdata/penguin_species_mass_summary.rds")
+
+# Save as a figure
+ggsave("outputs/figures/mass_compare_plot.png", 
+       plot = mass_compare_plot, 
+       width = 120, height = 120, 
+       units = "mm", dpi = 300)
 
