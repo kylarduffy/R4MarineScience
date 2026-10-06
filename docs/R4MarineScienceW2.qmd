@@ -1,0 +1,346 @@
+---
+title: "R4MarineScienceW2"
+author: "Kylar Duffy"
+format: html
+---
+
+# Workshop 2: Advanced data wrangling: Extracting ecological signals from noisy systems
+
+## Exercise 1: Cleaning the messy metadata
+
+```{r}
+# Load packages
+library(tidyverse)
+library(palmerpenguins)
+
+island_metadata <- tibble(
+  island_name = c(" biscoe", "Dream ", "Torgersen"),
+  station_install = c("15/01/2003", "22-03-2004", "05/11/2001"),
+  latitude = c(-64.81, -64.73, -64.76)
+) # generate the metadata
+
+print(island_metadata) # view metadata
+
+clean_metadata <- island_metadata |> # create new object
+  mutate(island_name = str_trim(island_name), # remove hidden spaces
+         island_name = str_to_title(island_name), #fix capitalisation
+         station_install = dmy(station_install)) # convert dates
+
+print(clean_metadata)
+```
+
+## Exercise 2: The Relational Join
+
+```{r}
+# Combine clean metadata with bioloigcal data
+penguins_spatial <- penguins |>
+  left_join(clean_metadata, # keep all rows from penguins and find matching data from clean_metadata
+    by = join_by(island == island_name) # tells r they have different names
+  )
+
+head(penguins_spatial) # view new data table
+```
+
+## Exercise 3: The Wide Summary Matrix
+
+```{r}
+# Step 1. Remove penguins with missing body mass
+penguins_spatial |>
+  drop_na(body_mass_g) # keep only rows that have an actual value
+# Step 2. Group by species and island
+max_mass_table <- penguins_spatial |>
+  drop_na(body_mass) |> # keep only rows that have an actual value
+  group_by(species, island) |> # consider each species x island combo separately
+  summarise(max_body_mass = max(body_mass),
+    .groups = "drop") |> 
+  pivot_wider(
+  names_from = island, # take values from island and turn into column names
+  values_from = max_body_mass # put max body mass into columns
+) 
+
+max_mass_table # view table
+```
+
+# Keystone Exercise: Estuary Fish Survey - Data Rescue Mission
+
+## Phase 1: Ingestion and Decontamination
+
+```{r}
+# Load packages
+library(tidyverse)
+library(readxl)
+
+# Import CSV datasets
+metadata <- read_csv(
+  here::here("data/workshop2/estuary_metadata.csv"))
+
+sonde_data <- read_csv(
+  here::here("data/workshop2/estuary_sonde_data.csv"))
+
+species_dictionary <- read_csv(
+  here::here("data/workshop2/species_dictionary.csv"))
+
+catch_sheets <- excel_sheets(
+  here::here("data/workshop2/estuary_catch_log.xlsx")) 
+
+catch_sheets # view the sheet names
+
+# Read all catch log tabs and combine them into one data frame
+catch_data <- map_dfr( # combine all sheets into one data frame by rows
+  catch_sheets,
+  ~ read_excel(
+    here::here("data/workshop2/estuary_catch_log.xlsx"),
+    sheet = .x)) # .x is a placeholder for the sheet name
+
+# String standardisation, site and species name
+catch_data <- catch_data |>
+  mutate(
+    site = str_to_lower(site),
+    site = str_replace_all(site, " ", "_"),
+    species = str_to_lower(species),
+    species = str_replace_all(species, " ", "_"))
+unique(catch_data$site) # check that above worked
+unique(catch_data$species) # check that above worked
+
+# Clean metadata site names
+metadata <- metadata |>
+  mutate(
+    site_name = str_to_lower(site_name),
+    site_name = str_replace_all(site_name, " ", "_"))
+unique(metadata$site_name) # check
+
+# Check species dictionary
+species_dictionary # names match already so no need to clean
+
+# Temporal parsing
+glimpse(sonde_data) # tells us what the data types are for each column, timestamp is character data
+head(sonde_data$timestamp) # see format of timestamps
+
+# Parse the timestamp
+sonde_data <- sonde_data |>
+  mutate(
+    timestamp = dmy_hm(timestamp))
+glimpse(sonde_data) # check that timestamp is now a date-time object
+
+# Remove hardware errors
+sum(sonde_data$turbidity == -999, na.rm = TRUE) # check how many -999 values are in the turbidity column
+sonde_data <- sonde_data |>
+  mutate(
+    turbidity = na_if(turbidity, -999)) # replace -999 with NA
+sum(sonde_data$turbidity == -999, na.rm = TRUE) # check if worked
+```
+
+## Phase 2: Relational Architecture
+
+```{r}
+# Summarise the water sensor data into a daily summary table 
+sonde_data <- sonde_data |>
+  mutate(
+    date = floor_date(timestamp, unit = "day")) # create a day variable
+
+# Create a daily summary table
+sonde_daily <- sonde_data |> 
+  group_by(site, date) |> # treats each site on each day as a group
+  summarise(
+    mean_temperature = mean(temperature, na.rm = TRUE), # daily mean temp
+    mean_salinity = mean(salinity, na.rm = TRUE), # daily mean salinity
+    .groups = "drop") # return finished table without keeping it grouped
+
+# Taxonomic translation
+catch_translated <- catch_data |>
+  left_join(
+    species_dictionary,
+    by = c("species" = "common_name")) # add scientific names to the catch data
+sum(is.na(catch_translated$scientific_name)) # check
+catch_translated <- catch_translated |>
+  select(-species) # remove the common name column
+
+# The grand join
+master_data <- catch_translated |>
+  left_join(
+    metadata,
+    by = c("site" = "site_name")) # join catch data with spatial metadata
+master_data <- master_data |>
+  left_join(
+    sonde_daily,
+    by = c("site", "date")) # join daily water quality
+``` 
+
+## Phase 3: Zero-Catch Framework
+
+```{r}
+# Check structure of sampling days
+master_data |>
+  distinct(site, date) |>
+  count(site) # tells us how many days of sampling were done at each site 
+
+# Complete all species across every site and sampling day
+master_data <- master_data |>
+  complete(
+    site,
+    date,
+    scientific_name) # make sure all species appear for every site x day, if a species wasn't recorded complete() will create a missing row
+glimpse(master_data) # check new rows were added
+
+master_data |>
+  summarise(
+    missing_count = sum(is.na(count)),
+    missing_zone = sum(is.na(zone)),
+    missing_salinity = sum(is.na(mean_salinity))) # confirm NA counts
+
+# Restore the spatial metadata for completed zero-catch rows
+master_data <- master_data |>
+  select(-lat, -lon, -zone) |>
+  left_join(
+    metadata,
+    by = c("site" = "site_name"))
+sum(is.na(master_data$zone)) # check
+
+# Restore water quality data for completed zero-catch rows
+master_data <- master_data |>
+  select(-mean_temperature, -mean_salinity) |>
+  left_join(
+    sonde_daily,
+    by = c("site", "date"))
+sum(is.na(master_data$mean_salinity)) # check
+
+# Replace missing catch values with zero
+master_data <- master_data |>
+  mutate(
+    count = coalesce(count, 0)) # keep the existing count where there is one; if count is NA , use 0 instead
+sum(is.na(master_data$count)) # check
+```
+
+## Phase 4: Statistical Extraction
+
+```{r}
+# Group data by species and estuary zone
+summary_data <- master_data |>
+  group_by(scientific_name, zone)
+summary_data
+
+# Calculate summary statistics for fish catch
+summary_data <- master_data |>
+  group_by(scientific_name, zone) |>
+  summarise(
+    mean_count = mean(count, na.rm = TRUE), # average fish catch
+    sd_count = sd(count, na.rm = TRUE), # standard deviation
+    se_count = sd(count, na.rm = TRUE) / sqrt(n()), # standard error
+    .groups = "drop") # removes grouping after the summary is finished
+summary_data
+
+# Calculate summary statistics for catch and salinity
+summary_data <- master_data |>
+  group_by(scientific_name, zone) |>
+  summarise(
+    mean_count = mean(count, na.rm = TRUE),
+    sd_count = sd(count, na.rm = TRUE),
+    se_count = sd(count, na.rm = TRUE) / sqrt(n()),
+    salinity_mean = mean(mean_salinity, na.rm = TRUE),
+    salinity_sd = sd(mean_salinity, na.rm = TRUE),
+    salinity_se = sd(mean_salinity, na.rm = TRUE) / sqrt(n()),
+    .groups = "drop"
+  )
+
+# Polish summary table
+summary_table <- summary_data |>
+  mutate(
+    across(
+      where(is.numeric),
+      ~ round(.x, 2)))
+
+# Other checks before visualisation
+metadata # check data is spatially ordered from upstream to downstream
+
+master_data <- master_data |>
+  mutate(
+    zone = factor(
+      zone,
+      levels = c("Upstream", "Middle", "Downstream", "Marine"))) # set the zone order
+levels(master_data$zone) #check
+```
+
+## Phase 5: Visual Communication
+
+```{r}
+# Make a basic abundance–salinity plot
+ggplot(
+  master_data,
+  aes(x = mean_salinity, y = count)
+) +
+  geom_point() +
+  facet_wrap(~ scientific_name) 
+
+# Add appropriate axis labels and clean theme
+ggplot(
+  master_data,
+  aes(x = mean_salinity, y = count)
+) +
+  geom_point() +
+  facet_wrap(~ scientific_name) +
+  labs(
+    x = "Mean daily salinity",
+    y = "Fish abundance"
+  ) +
+  theme_minimal()
+
+# Add a trend line
+ggplot(
+  master_data,
+  aes(x = mean_salinity, y = count)
+) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE, colour = "red") +
+  facet_wrap(~ scientific_name) +
+  labs(
+    x = "Mean daily salinity",
+    y = "Fish abundance"
+  ) +
+  theme_minimal()
+
+# Create italic facet labels
+species_labels <- c(
+  "Acanthopagrus spp." = "italic(Acanthopagrus~spp.)",
+  "Lates calcarifer" = "italic(Lates~calcarifer)",
+  "Lutjanus argentimaculatus" = "italic(Lutjanus~argentimaculatus)",
+  "Platycephalus spp." = "italic(Platycephalus~spp.)") # create a set of labels for scientific names
+
+# Apply italic labels
+fish_salinity_plot <- ggplot(
+  master_data,
+  aes(x = mean_salinity, y = count)
+) +
+  geom_point(
+    size = 1.5,
+    alpha = 0.4
+  ) +
+  geom_smooth(method = "lm", se = TRUE, colour = "red") +
+  facet_wrap(
+    ~ scientific_name,
+    labeller = as_labeller(species_labels, label_parsed)
+  ) +
+  labs(
+    x = "Mean daily salinity",
+    y = "Fish abundance"
+  ) +
+  theme_minimal()
+
+# Save the clean master dataset
+write_csv(
+  master_data,
+  here::here("outputs/tables", "estuary_master_data.csv"))
+
+# Save the summary table
+write_csv(
+  summary_table,
+  here::here("outputs/tables", "estuary_summary_table.csv"))
+
+# Save the figure
+ggsave(
+  filename = here::here("outputs/figures", "fish_abundance_salinity.png"),
+  plot = fish_salinity_plot,
+  width = 10,
+  height = 7,
+  dpi = 300)
+```
+
