@@ -1,43 +1,57 @@
 ---
 title: "MB5370 R4MarineScience"
+subtitle: "Workshop 1 Data Cleaning"
 author: "Kylar Duffy"
-format: html
 ---
 
-## Workshop 1 R for Marine Science data cleaning
+## Overview
 
 ```{r}
 #| message: false
-
 #| warning: false
+#| include: false
 
 # Execute workshop 1 R for Marine Science data cleaning code
-
 source("../code/R4MarineScienceW1.R") 
 ```
 
-## Wrangling and Plotting in Parallel
-
-### Mean Penguin Body Mass by Species and Island and Penguin Body Mass Across Species and Islands
+### Mean Penguin Body Mass by Species and Island 
 
 ```{r}
 #| message: false
-
 #| warning: false
+#| echo: true
+#| code-fold: true
 
 penguins |>
   group_by(species, island) |>
   summarise(
     mean_body_mass = mean(body_mass_g, na.rm = TRUE),
     .groups = "drop"
+  ) |>
+  knitr::kable(
+    caption = "Mean penguin body mass by species and island",
+    col.names = c("Species", "Island", "Mean body mass (g)"),
+    digits = 2
   )
+```
+
+### Body Mass Distribution
+
+```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| fig-width: 8
+#| fig-height: 5
 
 penguins |>
   ggplot(aes(x = species,
              y = body_mass_g,
              fill = island)) +
   geom_boxplot() +
-  scale_fill_manual(values = c("Dream" = "turquoise3", "Torgersen" = "olivedrab", "Biscoe" = "sienna2")) +
+  scale_fill_manual(values = c("Dream" = "#D98B78", "Torgersen" = "#9982BA", "Biscoe" = "#319795")) +
   labs(
     title = "Penguin Body Mass Distribution by Species and Island",
     x = "Species",
@@ -48,9 +62,88 @@ penguins |>
         axis.line = element_line(color = "black"))
 ```
 
-### Experiment with swapping standard deviation for standard error
+## Comparing Variation and Uncertainty
+
+### Standard Deviation
 
 ```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| fig-width: 8
+#| fig-height: 5
+mass_compare_plot <- penguins |>
+  group_by(species, island) |>
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    sd_mass = sd(body_mass_g, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |>
+  ggplot(aes(x = species, y = mean_mass, colour = island)) +
+  geom_point(size = 3) +
+  geom_errorbar(
+    aes(ymin = mean_mass - sd_mass,
+        ymax = mean_mass + sd_mass),
+    width = 0.2
+  ) +
+  scale_colour_manual(
+    values = c(
+      "Biscoe" = "#319795",
+      "Dream" = "#D98B78",
+      "Torgersen" = "#9982BA"
+    )
+  ) +
+  labs(
+    x = "Penguin species",
+    y = "Mean body mass (g)",
+    colour = "Island"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(size = 12),
+    legend.position = "right",
+    legend.title = element_text(face = "bold"),
+    plot.margin = margin(10, 15, 10, 10)
+  )
+
+mass_compare_plot
+```
+
+### Standard Error
+
+```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+
+knitr::kable(
+  mass_compare_plot2,
+  caption = "Summary of penguin body mass by species and island",
+  digits = 2,
+  col.names = c(
+    "Species",
+    "Island",
+    "Mean mass (g)",
+    "SD (g)",
+    "Sample size",
+    "SE (g)"
+  )
+)
+```
+
+#### Experiment with swapping standard deviation for standard error
+
+```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| fig-width: 8
+#| fig-height: 5
 mass_compare_plot2 <- penguins |> 
   group_by(species, island) |>
   summarise(
@@ -66,33 +159,39 @@ mass_compare_plot2 <- penguins |>
 mass_compare_plotSE <- mass_compare_plot2 |>
   ggplot(aes(x = species, y = mean_mass, colour = island)) +
   geom_point(size = 3) +
-  geom_errorbar(aes(ymin = mean_mass - se_mass,
-                    ymax = mean_mass + se_mass),
-                width = 0.2) + 
-  labs(title = "Mean Body Mass by Species and Island",
-       subtitle = "Error bars represent standard deviation",
-       y = "Mean Body Mass (g)",
-       x = "Species") +
-  theme_minimal()
+  geom_errorbar(
+    aes(
+      ymin = mean_mass - se_mass,
+      ymax = mean_mass + se_mass
+    ),
+    width = 0.2,
+    linewidth = 0.7
+  ) +
+  scale_colour_manual(
+    values = c(
+      "Biscoe" = "#319795",
+      "Dream" = "#D98B78",
+      "Torgersen" = "#9982BA"
+    )
+  ) +
+  labs(
+    x = "Penguin species",
+    y = "Mean body mass (g)",
+    colour = "Island"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(size = 12),
+    legend.position = "right",
+    legend.title = element_text(face = "bold"),
+    plot.margin = margin(10, 15, 10, 10)
+  )
 
 mass_compare_plotSE
 ```
 
-### Saving, exporting and version milestones
+#### Ecological Interpretation
 
-```{r}
-# Tables
-# exporting our collapsed summary table as a universal flat text file
-# write_csv(biological_signal, "outputs/tables/penguin_species_mass_summary.csv")
 
-# saving as a native R binary file
-# saveRDS(penguin_species_mass_summary,outputs/tables/penguin_species_mass_summary.rds")
-
-# Figures
-# ggsave("outputs/figures/mass_compare_plot.png",
-        # plot = mass_compare_plotSE,
-        # width = 120, height = 120,
-        # units = "mm", dpi = 300)
-
-```
-
+### Workshop Reflection

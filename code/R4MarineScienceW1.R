@@ -137,14 +137,31 @@ mass_compare_plot <- penguins |>
   ) |>
   ggplot(aes(x = species, y = mean_mass, colour = island)) +
   geom_point(size = 3) +
-  geom_errorbar(aes(ymin = mean_mass - sd_mass, 
-                    ymax = mean_mass + sd_mass), 
-                width = 0.2) +
-  labs(title = "Mean Body Mass by Species and Island",
-       subtitle = "Error bars represent standard deviation",
-       y = "Mean Body Mass (g)",
-       x = "Species") +
-  theme_minimal() # pipe directly from aggregation to plotting error bars
+  geom_errorbar(
+    aes(ymin = mean_mass - sd_mass,
+        ymax = mean_mass + sd_mass),
+    width = 0.2
+  ) +
+  scale_colour_manual(
+    values = c(
+      "Biscoe" = "#319795",
+      "Dream" = "#D98B78",
+      "Torgersen" = "#9982BA"
+    )
+  ) +
+  labs(
+    x = "Penguin species",
+    y = "Mean body mass (g)",
+    colour = "Island"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(size = 12),
+    legend.position = "right",
+    legend.title = element_text(face = "bold"),
+    plot.margin = margin(10, 15, 10, 10)
+  )
 
 mass_compare_plot # view plot
 
@@ -160,19 +177,40 @@ mass_compare_plot2 <- penguins |>
   mutate(
     se_mass = sd_mass / sqrt(n)
   )
+
 mass_compare_plot2
 
 mass_compare_plotSE <- mass_compare_plot2 |>
   ggplot(aes(x = species, y = mean_mass, colour = island)) +
-  geom_point(size = 3) +
-  geom_errorbar(aes(ymin = mean_mass - se_mass,
-                    ymax = mean_mass + se_mass),
-                width = 0.2) + 
-  labs(title = "Mean Body Mass by Species and Island",
-       subtitle = "Error bars represent standard deviation",
-       y = "Mean Body Mass (g)",
-       x = "Species") +
-  theme_minimal()
+  geom_point(
+    size = 3,
+    position = position_dodge(width = 0.5)
+    ) +
+  geom_errorbar(
+    aes(
+      ymin = mean_mass - se_mass,
+      ymax = mean_mass + se_mass
+    ),
+    width = 0.15,
+    linewidth = 0.7,
+    position = position_dodge(width = 0.5)
+  ) +
+  scale_colour_manual(
+    values = c(
+      "Biscoe" = "#319795",
+      "Dream" = "#D98B78",
+      "Torgersen" = "#9982BA")
+  ) + labs(
+    x = "Penguin species",
+    y = "Mean body mass (g)",
+    colour = "Island"
+  ) + theme_classic(base_size = 12) +
+  theme(
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(size = 12),
+    legend.position = "right",
+    legend.title = element_text(face = "bold"),
+    plot.margin = margin(10, 15, 10, 10))
 
 mass_compare_plotSE
 
@@ -183,8 +221,8 @@ mass_compare_plotSE
 # saveRDS(biological_signal, "Rdata/penguin_species_mass_summary.rds")
 
 # Save as a figure
-ggsave("outputs/figures/mass_compare_plot.png", 
-       plot = mass_compare_plot, 
-       width = 120, height = 120, 
-       units = "mm", dpi = 300)
+# ggsave("outputs/figures/mass_compare_plot.png", 
+#       plot = mass_compare_plot, 
+#       width = 120, height = 120, 
+#       units = "mm", dpi = 300)
 
