@@ -1,14 +1,20 @@
 ---
-title: "R4MarineScienceW2"
+title: "Workshop 2: Advanced Data Wrangling: Extracting Ecological Signals From Noisy Systems"
+subtitle: "MB5370 R4MarineScience"
 author: "Kylar Duffy"
-format: html
 ---
 
-# Workshop 2: Advanced data wrangling: Extracting ecological signals from noisy systems
+# Practical Exercises: Penguins, Pivots and Joining Data
+## Overview
 
 ## Exercise 1: Cleaning the messy metadata
-
+Before Cleaning:
 ```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+
 # Load packages
 library(tidyverse)
 library(palmerpenguins)
@@ -20,45 +26,89 @@ island_metadata <- tibble(
 ) # generate the metadata
 
 print(island_metadata) # view metadata
+```
+
+After Cleaning:
+```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
 
 clean_metadata <- island_metadata |> # create new object
-  mutate(island_name = str_trim(island_name), # remove hidden spaces
-         island_name = str_to_title(island_name), #fix capitalisation
-         station_install = dmy(station_install)) # convert dates
+  mutate(
+    island_name = str_trim(island_name), # remove hidden spaces
+    island_name = str_to_title(island_name), # fix capitalisation
+    station_install = dmy(station_install) # convert dates
+  )
 
-print(clean_metadata)
+# Display cleaned metadata as a formatted table
+knitr::kable(
+  clean_metadata,
+  caption = "Cleaned island metadata following standardisation of island names and installation dates"
+)
 ```
 
 ## Exercise 2: The Relational Join
 
 ```{r}
-# Combine clean metadata with bioloigcal data
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+
+# Combine clean metadata with biological data
 penguins_spatial <- penguins |>
-  left_join(clean_metadata, # keep all rows from penguins and find matching data from clean_metadata
-    by = join_by(island == island_name) # tells r they have different names
+  left_join(
+    clean_metadata, # keep all rows from penguins
+    by = join_by(island == island_name) # match columns with different names
   )
 
-head(penguins_spatial) # view new data table
+# Display the first six rows as a formatted table
+knitr::kable(
+  head(penguins_spatial),
+  caption = "Preview of the penguin dataset combined with cleaned island metadata",
+  digits = 2
+)
 ```
 
 ## Exercise 3: The Wide Summary Matrix
 
 ```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+
 # Step 1. Remove penguins with missing body mass
 penguins_spatial |>
-  drop_na(body_mass_g) # keep only rows that have an actual value
+  drop_na(body_mass_g) |>
+  head() |>
+  knitr::kable(
+    caption = "Preview of penguin records after removing missing body mass values",
+    digits = 2
+  )
+
 # Step 2. Group by species and island
 max_mass_table <- penguins_spatial |>
-  drop_na(body_mass) |> # keep only rows that have an actual value
+  drop_na(body_mass_g) |> # keep only rows that have an actual value
   group_by(species, island) |> # consider each species x island combo separately
-  summarise(max_body_mass = max(body_mass),
-    .groups = "drop") |> 
+  summarise(
+    max_body_mass = max(body_mass_g),
+    .groups = "drop"
+  ) |>
   pivot_wider(
-  names_from = island, # take values from island and turn into column names
-  values_from = max_body_mass # put max body mass into columns
-) 
+    names_from = island, # take values from island and turn into column names
+    values_from = max_body_mass # put max body mass into columns
+  )
 
-max_mass_table # view table
+# Display the maximum body mass table
+knitr::kable(
+  max_mass_table,
+  caption = "Maximum penguin body mass (g) by species and island",
+  digits = 0,
+  na = "—"
+)
 ```
 
 # Keystone Exercise: Estuary Fish Survey - Data Rescue Mission
@@ -66,6 +116,12 @@ max_mass_table # view table
 ## Phase 1: Ingestion and Decontamination
 
 ```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| output: false
+
 # Load packages
 library(tidyverse)
 library(readxl)
@@ -133,6 +189,12 @@ sum(sonde_data$turbidity == -999, na.rm = TRUE) # check if worked
 ## Phase 2: Relational Architecture
 
 ```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| output: false
+
 # Summarise the water sensor data into a daily summary table 
 sonde_data <- sonde_data |>
   mutate(
@@ -169,6 +231,12 @@ master_data <- master_data |>
 ## Phase 3: Zero-Catch Framework
 
 ```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| output: false
+
 # Check structure of sampling days
 master_data |>
   distinct(site, date) |>
@@ -177,9 +245,9 @@ master_data |>
 # Complete all species across every site and sampling day
 master_data <- master_data |>
   complete(
-    site,
-    date,
-    scientific_name) # make sure all species appear for every site x day, if a species wasn't recorded complete() will create a missing row
+    nesting(site, date),
+    scientific_name
+  ) # make sure all species appear for every site x day, if a species wasn't recorded complete() will create a missing row
 glimpse(master_data) # check new rows were added
 
 master_data |>
@@ -211,9 +279,27 @@ master_data <- master_data |>
 sum(is.na(master_data$count)) # check
 ```
 
+```{r}
+#| echo: true
+#| code-fold: true
+#| label: tbl-clean-master
+#| tbl-cap: "Preview of the cleaned estuary fish survey dataset"
+
+# Display the first six rows of the completed master dataset
+master_data |>
+  head(6) |>
+  knitr::kable(digits = 2)
+```
+
 ## Phase 4: Statistical Extraction
 
 ```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| output: false
+
 # Group data by species and estuary zone
 summary_data <- master_data |>
   group_by(scientific_name, zone)
@@ -258,45 +344,50 @@ master_data <- master_data |>
       zone,
       levels = c("Upstream", "Middle", "Downstream", "Marine"))) # set the zone order
 levels(master_data$zone) #check
+
+# Polish summary table
+summary_table <- summary_data |>
+  mutate(
+    across(
+      where(is.numeric),
+      ~ round(.x, 2)))
+```
+
+```{r}
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+# Display the statistical summary as a formatted table
+knitr::kable(
+  summary_table,
+  caption = "Mean, standard deviation and standard error of fish catch and salinity by species and estuary zone",
+  col.names = c(
+    "Scientific name",
+    "Estuary zone",
+    "Mean catch",
+    "SD catch",
+    "SE catch",
+    "Mean salinity",
+    "SD salinity",
+    "SE salinity"
+  ),
+  digits = 2,
+  na = "—"
+)
 ```
 
 ## Phase 5: Visual Communication
 
 ```{r}
-# Make a basic abundance–salinity plot
-ggplot(
-  master_data,
-  aes(x = mean_salinity, y = count)
-) +
-  geom_point() +
-  facet_wrap(~ scientific_name) 
-
-# Add appropriate axis labels and clean theme
-ggplot(
-  master_data,
-  aes(x = mean_salinity, y = count)
-) +
-  geom_point() +
-  facet_wrap(~ scientific_name) +
-  labs(
-    x = "Mean daily salinity",
-    y = "Fish abundance"
-  ) +
-  theme_minimal()
-
-# Add a trend line
-ggplot(
-  master_data,
-  aes(x = mean_salinity, y = count)
-) +
-  geom_point() +
-  geom_smooth(method = "lm", se = TRUE, colour = "red") +
-  facet_wrap(~ scientific_name) +
-  labs(
-    x = "Mean daily salinity",
-    y = "Fish abundance"
-  ) +
-  theme_minimal()
+#| message: false
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| outputs: false
+#| fig-width: 8
+#| fig-height: 5
+#| fig-cap: "Relationship between mean daily salinity and fish abundance across the Ross River Estuary, shown separately for each fish species."
 
 # Create italic facet labels
 species_labels <- c(
@@ -311,10 +402,15 @@ fish_salinity_plot <- ggplot(
   aes(x = mean_salinity, y = count)
 ) +
   geom_point(
-    size = 1.5,
-    alpha = 0.4
+    size = 2,
+    alpha = 0.5,
+    colour = "#319795"
   ) +
-  geom_smooth(method = "lm", se = TRUE, colour = "red") +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    colour = "#D98B78"
+  ) +
   facet_wrap(
     ~ scientific_name,
     labeller = as_labeller(species_labels, label_parsed)
@@ -323,24 +419,15 @@ fish_salinity_plot <- ggplot(
     x = "Mean daily salinity",
     y = "Fish abundance"
   ) +
-  theme_minimal()
+  theme_minimal(base_size = 12) +
+  theme(
+    axis.text = element_text(colour = "black"),
+    axis.title = element_text(size = 12),
+    strip.text = element_text(size = 11),
+    panel.spacing = unit(1, "lines")
+  )
 
-# Save the clean master dataset
-write_csv(
-  master_data,
-  here::here("outputs/tables", "estuary_master_data.csv"))
-
-# Save the summary table
-write_csv(
-  summary_table,
-  here::here("outputs/tables", "estuary_summary_table.csv"))
-
-# Save the figure
-ggsave(
-  filename = here::here("outputs/figures", "fish_abundance_salinity.png"),
-  plot = fish_salinity_plot,
-  width = 10,
-  height = 7,
-  dpi = 300)
+fish_salinity_plot
 ```
+
 

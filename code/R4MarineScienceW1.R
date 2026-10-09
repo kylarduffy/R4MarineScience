@@ -182,35 +182,35 @@ mass_compare_plot2
 
 mass_compare_plotSE <- mass_compare_plot2 |>
   ggplot(aes(x = species, y = mean_mass, colour = island)) +
-  geom_point(
-    size = 3,
-    position = position_dodge(width = 0.5)
-    ) +
+  geom_point(size = 3) +
   geom_errorbar(
     aes(
       ymin = mean_mass - se_mass,
       ymax = mean_mass + se_mass
     ),
-    width = 0.15,
-    linewidth = 0.7,
-    position = position_dodge(width = 0.5)
+    width = 0.2,
+    linewidth = 0.7
   ) +
   scale_colour_manual(
     values = c(
       "Biscoe" = "#319795",
       "Dream" = "#D98B78",
-      "Torgersen" = "#9982BA")
-  ) + labs(
+      "Torgersen" = "#9982BA"
+    )
+  ) +
+  labs(
     x = "Penguin species",
     y = "Mean body mass (g)",
     colour = "Island"
-  ) + theme_classic(base_size = 12) +
+  ) +
+  theme_classic(base_size = 12) +
   theme(
     axis.text = element_text(colour = "black"),
     axis.title = element_text(size = 12),
     legend.position = "right",
     legend.title = element_text(face = "bold"),
-    plot.margin = margin(10, 15, 10, 10))
+    plot.margin = margin(10, 15, 10, 10)
+  )
 
 mass_compare_plotSE
 

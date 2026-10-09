@@ -1,17 +1,17 @@
 scientific_name,zone,mean_count,sd_count,se_count,salinity_mean,salinity_sd,salinity_se
-Acanthopagrus spp.,Upstream,2.57,1.65,0.3,4.95,0.19,0.03
-Acanthopagrus spp.,Middle,2.23,1.57,0.29,14.91,0.4,0.07
 Acanthopagrus spp.,Downstream,2,1.51,0.28,27.97,0.35,0.06
 Acanthopagrus spp.,Marine,2.33,1.88,0.34,34.02,0.1,0.02
-Lates calcarifer,Upstream,4.8,1.69,0.31,4.95,0.19,0.03
-Lates calcarifer,Middle,2.2,1.32,0.24,14.91,0.4,0.07
+Acanthopagrus spp.,Middle,2.23,1.57,0.29,14.91,0.4,0.07
+Acanthopagrus spp.,Upstream,2.57,1.65,0.3,4.95,0.19,0.03
 Lates calcarifer,Downstream,1.6,1.4,0.26,27.97,0.35,0.06
 Lates calcarifer,Marine,1.57,1.36,0.25,34.02,0.1,0.02
-Lutjanus argentimaculatus,Upstream,1.9,1.16,0.21,4.95,0.19,0.03
-Lutjanus argentimaculatus,Middle,1.97,1.13,0.21,14.91,0.4,0.07
+Lates calcarifer,Middle,2.2,1.32,0.24,14.91,0.4,0.07
+Lates calcarifer,Upstream,4.8,1.69,0.31,4.95,0.19,0.03
 Lutjanus argentimaculatus,Downstream,2,1.64,0.3,27.97,0.35,0.06
 Lutjanus argentimaculatus,Marine,1.5,1.14,0.21,34.02,0.1,0.02
-Platycephalus spp.,Upstream,2.3,1.82,0.33,4.95,0.19,0.03
-Platycephalus spp.,Middle,1.97,1.45,0.26,14.91,0.4,0.07
+Lutjanus argentimaculatus,Middle,1.97,1.13,0.21,14.91,0.4,0.07
+Lutjanus argentimaculatus,Upstream,1.9,1.16,0.21,4.95,0.19,0.03
 Platycephalus spp.,Downstream,2.1,0.96,0.18,27.97,0.35,0.06
 Platycephalus spp.,Marine,5.67,1.3,0.24,34.02,0.1,0.02
+Platycephalus spp.,Middle,1.97,1.45,0.26,14.91,0.4,0.07
+Platycephalus spp.,Upstream,2.3,1.82,0.33,4.95,0.19,0.03

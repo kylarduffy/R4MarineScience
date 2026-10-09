@@ -1,6 +1,6 @@
 ---
-title: "MB5370 R4MarineScience"
-subtitle: "Workshop 1 Data Cleaning"
+title: "Workshop 1: Data Cleaning"
+subtitle: "MB5370 R4MarineScience"
 author: "Kylar Duffy"
 ---
 
