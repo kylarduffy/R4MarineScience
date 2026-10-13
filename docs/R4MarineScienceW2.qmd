@@ -447,4 +447,6 @@ This workshop expanded my understanding of data wrangling in R by introducing mo
 
 One of the most important concepts explored was the distinction between missing values and genuine zero observations. Creating a zero-catch framework helped to understand how overlooking species absences could influence summary statistics and lead to misleading ecological interpretations. I also developed a greater understanding for the importance of standardising variable names, checking data types and ensuring datasets are compatible before joining them.
 
+One particularly useful skill was using the here::here() function to manage file paths within an R project. I found this valuable because it provides a more reliable way to locate and import datasets without relying on computer-specific file paths.
+
 Overall, this workshop strengthened my understanding of reproducible data workflows and increased my confidence in working with more complex ecological datasets.
