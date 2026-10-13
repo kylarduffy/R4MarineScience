@@ -208,4 +208,6 @@ This workshop helped me develop a stronger understanding of the foundations of d
 
 An important part of the learning process was recognising how missing values can affect calculations and understanding why functions such as mean() and sd() require na.rm = TRUE when working with incomplete datasets. Creating visualisations with ggplot2 also helped me understand how individual layers contribute to a figure and how different measures of variability influence the interpretation of ecological data.
 
-Overall, this workshop reinforced the importance of understanding what each line of code is doing rather than copying code and focusing on obtaining the correct output. It also highlighted how careful data exploration, troubleshooting and clear visual communication contribute to reproducible scientific research.
+I initially found troubleshooting console errors challenging, but using online resources and the built-in Help helped me understand what was causing them and how to resolve them. Working through these issues, made me realise that many errors were more straightforward to fix than I had expected. This helped build my confidence in debugging code independently and reinforced the importance of understanding how each function works rather than simply focusing on the final output.
+
+Overall, this workshop highlighted the importance of combining technical programming skills with problem-solving and clear scientific communication to produce reproducible analyses.
