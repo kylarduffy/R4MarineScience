@@ -7,6 +7,9 @@ format:
     embed-resources: true
 ---
 
+## Overview
+This workshop focused on advanced data wrangling and scientific visualisation, with an emphasis on communicating ecological data clearly and effectively. The first exercise involved critically evaluating a published figure on sea turtle bycatch and reconstructing it to improve its presentation. The second exercise explored Queensland Shark Control Program data, applying data cleaning, summarisation and visualisation techniques to investigate patterns relevant to marine conservation and fisheries management.
+
 ## Exercise 1: Plot Deconstruction
 
 ### Selected Original Figure
@@ -496,14 +499,19 @@ theme(
 remake_figure_turt_bycatch
 ```
 
-Figure 1. Annual modelled bycatch of juvenile Kemp's ridley and green turtles across commercial and recreational fisheries in the southeastern United States from 1996 to 2017. Lines represent modelled bycatch associated with shrimp trawl, bottom longline, gillnet and recreational fisheries, calculated from the spatial overlap between predicted turtle abundance and fishing effort combined with fishery-specific bycatch rates. Bottom longline modelled bycatch is shown only for Kemp's ridley turtles because a corresponding bycatch rate was not available for green turtles. Note that y-axis scales differ between species to accommodate differences in the magnitude of modelled bycatch. Colours and line types distinguish fisheries to improve accessibility and interpretation.
+Figure 1. Annual modelled bycatch of juvenile Kemp's ridley and green turtles across four fisheries in the southeastern United States (1996–2017). Colours and line types distinguish fisheries, while separate y-axis scales accommodate differences in bycatch magnitude between species. Bottom longline estimates are available only for Kemp's ridley turtles.
+
+#### Figure Interpretation
+The reconstructed figure highlights differences in modeled bycatch between juvenile Kemp's ridley and green turtles across fisheries in the southeastern United States from 1996 to 2017. Recreational fisheries generally contributed the highest estimated bycatch for both species, while other fisheries showed substantially lower values. The differences in bycatch magnitude and temporal patterns highlight the importance of considering individual fisheries when assessing potential threats to marine turtles.
+
+The redesigned figure improves readability by using both colours and line types to distinguish fisheries, alongside a consistent legend and separate y-axis scales for each turtle species. These changes make comparisons between species and fisheries clearer while retaining the differences in bycatch magnitude. However, the values represent modeled estimates rather than directly observed captures, so the patterns should be interpreted with this distinction in mind.
 
 ## Exercise 2: Queensland fisheries data discovery challenge
 
 ### Part 1: Sourcing data
-I have chosen Shark Control Program non-target species statistics in a 10 year period from the year 2008-2017. 
+The Queensland Shark Control Program aims to reduce the risk of shark interactions with swimmers; however, its fishing equipment can also capture non-target marine species. Understanding patterns in non-target catch is important for evaluating the program's ecological impacts and identifying opportunities for improved bycatch management. This analysis examines Shark Control Program catch records from 2008 to 2017, focusing on differences in non-target species catches across management areas and over time. 
 
-Management Question: Which non-target species were most frequently caught in the Queensland Shark Control Program, where were catches highest and how did these patterns change from 2008 to 2017? Catch abundance is compared among species, management areas and years to identify spatial and temporal patterns in non-target catch that may be relevant to fisheries managers and community stakeholders.
+Management Question: Which non-target species were most frequently caught in the Queensland Shark Control Program, where were catches highest, and how did these patterns change between 2008 and 2017?
 
 ### Part 2: Independent Wrangling and Communication
 
@@ -572,7 +580,7 @@ shark_data |>
     missing_number_caught = sum(is.na(`Number Caught`)),
     total_rows = n())
 
-# Remove completely empty catch records
+# Remove records without a species identification
 shark_data <- shark_data |>
   filter(!is.na(`Species Name`))
 
@@ -647,6 +655,7 @@ annual_species_catch <- shark_data |>
 annual_species_catch
 
 # Add zero catches for missing species-year combinations
+# confirmed to be absent from the original catch records
 annual_species_catch <- annual_species_catch |>
   complete(
     year = 2008:2017,
@@ -879,11 +888,18 @@ catch_area_plot <- ggplot(
 catch_area_plot
 ```
 
-Figure 2. Annual catch of the five most frequently caught species recorded in the Queensland Shark Control Program dataset between 2008 and 2017, separated by management area. Points represent the total number of individuals caught within each area and year, with lines showing temporal patterns in catch. For each species, management areas contributing at least 10% of the species' total catch across the study period are displayed separately, while areas contributing less than 10% are combined as “Other areas”. Note that y-axis scales differ among species to accommodate substantial differences in catch magnitude. Cownose rays had the highest overall catch and were predominantly caught on the Gold Coast, whereas catches of other species showed different spatial and temporal patterns.
+Figure 2. Annual catch of the five most frequently caught non-target species in the Queensland Shark Control Program (2008–2017), separated by management area. Points and lines represent annual catch totals and temporal trends. Areas contributing less than 10% of each species' total catch are grouped as “Other areas”. Y-axis scales differ between species to accommodate differences in catch magnitude.
 
 ### Part 3: Report Writing
 
 #### Management Interpretation and Recommendation
 The analysis indicates that non-target catch in the Queensland Shark Control Program was unevenly distributed among species, management areas and years between 2008 and 2017. Cownose rays had the highest total catch among the five most frequently caught non-target species, with catches strongly concentrated on the Gold Coast and a pronounced peak in 2009. Other species showed different spatial patterns, including catfish catches concentrated in Townsville and loggerhead turtle catches distributed across several management areas. These patterns demonstrate that non-target capture is not consistent across the Queensland coast and that particular species–area combinations may contribute disproportionately to overall bycatch.
 
-Monitoring and bycatch mitigation efforts should prioritise species and management areas with consistently high or periodically elevated non-target catches, rather than applying a uniform approach across all Shark Control Program locations. In particular, the concentration of cownose ray catches on the Gold Coast and catfish catches in Townsville suggests that area-specific patterns warrant further investigation. For conservation sensitive species such as marine turtles and dolphins, continued monitoring of spatial and temporal catch patterns could help identify locations or periods where targeted mitigation measures may be most effective. These catch data should be interpreted alongside information on fishing effort, gear deployment and species abundance before concluding that differences in catch represent differences in population-level risk.
+Monitoring and bycatch mitigation efforts should prioritise species and management areas with consistently high or periodically elevated non-target catches, rather than applying a uniform approach across all Shark Control Program locations. In particular, the concentration of cownose ray catches on the Gold Coast and catfish catches in Townsville suggests that area-specific patterns warrant further investigation. Future analyses should incorporate fishing effort and gear deployment data to calculate catch per unit effort (CPUE), allowing more meaningful comparisons between management areas and years. These findings should also be considered alongside species abundance and conservation status before drawing conclusions about population-level risk.
+
+### Workshop Reflection
+This workshop helped me develop a more critical understanding of scientific data visualisation and the importance of presenting ecological information clearly. Reconstructing a published figure on sea turtle bycatch encouraged me to consider aspects of figure design that I had previously paid less attention to, such as colour accessibility, axis scaling and the effective use of labels and legends. I learned that producing a scientifically useful figure involves more than simply displaying data; it also requires considering how different design choices influence the reader's interpretation.
+
+I particularly enjoyed working with the Queensland Shark Control Program dataset as the exercise directly related to my interests in marine conservation and the ecological impacts of fisheries. Working with real-world data provided an opportunity to apply and build on my data wrangling skills while investigating patterns in non-target species catches. It also highlighted the importance of interpreting catch data carefully, particularly when considering how differences in fishing effort may influence observed trends.
+
+Overall, this workshop strengthened my confidence in using R to communicate ecological findings and demonstrated how data visualisation can support evidence-based conservation and management decisions. It also encouraged me to think more critically about the figures I encounter in scientific literature and how I might improve their presentation in my own research.

@@ -2232,6 +2232,10 @@ vertical-align: -.125em;
 </header>
 
 
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>This workshop focused on advanced data wrangling and scientific visualisation, with an emphasis on communicating ecological data clearly and effectively. The first exercise involved critically evaluating a published figure on sea turtle bycatch and reconstructing it to improve its presentation. The second exercise explored Queensland Shark Control Program data, applying data cleaning, summarisation and visualisation techniques to investigate patterns relevant to marine conservation and fisheries management.</p>
+</section>
 <section id="exercise-1-plot-deconstruction" class="level2">
 <h2 class="anchored" data-anchor-id="exercise-1-plot-deconstruction">Exercise 1: Plot Deconstruction</h2>
 <section id="selected-original-figure" class="level3">
@@ -2798,15 +2802,20 @@ vertical-align: -.125em;
 </div>
 </div>
 </div>
-<p>Figure 1. Annual modelled bycatch of juvenile Kemp’s ridley and green turtles across commercial and recreational fisheries in the southeastern United States from 1996 to 2017. Lines represent modelled bycatch associated with shrimp trawl, bottom longline, gillnet and recreational fisheries, calculated from the spatial overlap between predicted turtle abundance and fishing effort combined with fishery-specific bycatch rates. Bottom longline modelled bycatch is shown only for Kemp’s ridley turtles because a corresponding bycatch rate was not available for green turtles. Note that y-axis scales differ between species to accommodate differences in the magnitude of modelled bycatch. Colours and line types distinguish fisheries to improve accessibility and interpretation.</p>
+<p>Figure 1. Annual modelled bycatch of juvenile Kemp’s ridley and green turtles across four fisheries in the southeastern United States (1996–2017). Colours and line types distinguish fisheries, while separate y-axis scales accommodate differences in bycatch magnitude between species. Bottom longline estimates are available only for Kemp’s ridley turtles.</p>
+<section id="figure-interpretation" class="level4">
+<h4 class="anchored" data-anchor-id="figure-interpretation">Figure Interpretation</h4>
+<p>The reconstructed figure highlights differences in modeled bycatch between juvenile Kemp’s ridley and green turtles across fisheries in the southeastern United States from 1996 to 2017. Recreational fisheries generally contributed the highest estimated bycatch for both species, while other fisheries showed substantially lower values. The differences in bycatch magnitude and temporal patterns highlight the importance of considering individual fisheries when assessing potential threats to marine turtles.</p>
+<p>The redesigned figure improves readability by using both colours and line types to distinguish fisheries, alongside a consistent legend and separate y-axis scales for each turtle species. These changes make comparisons between species and fisheries clearer while retaining the differences in bycatch magnitude. However, the values represent modeled estimates rather than directly observed captures, so the patterns should be interpreted with this distinction in mind.</p>
+</section>
 </section>
 </section>
 <section id="exercise-2-queensland-fisheries-data-discovery-challenge" class="level2">
 <h2 class="anchored" data-anchor-id="exercise-2-queensland-fisheries-data-discovery-challenge">Exercise 2: Queensland fisheries data discovery challenge</h2>
 <section id="part-1-sourcing-data" class="level3">
 <h3 class="anchored" data-anchor-id="part-1-sourcing-data">Part 1: Sourcing data</h3>
-<p>I have chosen Shark Control Program non-target species statistics in a 10 year period from the year 2008-2017.</p>
-<p>Management Question: Which non-target species were most frequently caught in the Queensland Shark Control Program, where were catches highest and how did these patterns change from 2008 to 2017? Catch abundance is compared among species, management areas and years to identify spatial and temporal patterns in non-target catch that may be relevant to fisheries managers and community stakeholders.</p>
+<p>The Queensland Shark Control Program aims to reduce the risk of shark interactions with swimmers; however, its fishing equipment can also capture non-target marine species. Understanding patterns in non-target catch is important for evaluating the program’s ecological impacts and identifying opportunities for improved bycatch management. This analysis examines Shark Control Program catch records from 2008 to 2017, focusing on differences in non-target species catches across management areas and over time.</p>
+<p>Management Question: Which non-target species were most frequently caught in the Queensland Shark Control Program, where were catches highest, and how did these patterns change between 2008 and 2017?</p>
 </section>
 <section id="part-2-independent-wrangling-and-communication" class="level3">
 <h3 class="anchored" data-anchor-id="part-2-independent-wrangling-and-communication">Part 2: Independent Wrangling and Communication</h3>
@@ -2872,7 +2881,7 @@ vertical-align: -.125em;
 <span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">missing_number_caught =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="st">`</span><span class="at">Number Caught</span><span class="st">`</span>)),</span>
 <span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_rows =</span> <span class="fu">n</span>())</span>
 <span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove completely empty catch records</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove records without a species identification</span></span>
 <span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>shark_data <span class="ot">&lt;-</span> shark_data <span class="sc">|&gt;</span></span>
 <span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="st">`</span><span class="at">Species Name</span><span class="st">`</span>))</span>
 <span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a></span>
@@ -2946,35 +2955,36 @@ vertical-align: -.125em;
 <span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>annual_species_catch</span>
 <span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Add zero catches for missing species-year combinations</span></span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>annual_species_catch <span class="ot">&lt;-</span> annual_species_catch <span class="sc">|&gt;</span></span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="dv">2008</span><span class="sc">:</span><span class="dv">2017</span>,</span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Species Name</span><span class="st">`</span> <span class="ot">=</span> top_species,</span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">total_caught =</span> <span class="dv">0</span>))</span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>annual_species_catch</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate annual catch of top species by management area</span></span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>species_area_year <span class="ot">&lt;-</span> shark_data <span class="sc">|&gt;</span></span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Species Name</span><span class="st">`</span> <span class="sc">%in%</span> top_species) <span class="sc">|&gt;</span></span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, Area, <span class="st">`</span><span class="at">Species Name</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_caught =</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Number Caught</span><span class="st">`</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>species_area_year</span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarise catch of top species by management area</span></span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>species_area_catch <span class="ot">&lt;-</span> shark_data <span class="sc">|&gt;</span></span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Species Name</span><span class="st">`</span> <span class="sc">%in%</span> top_species) <span class="sc">|&gt;</span></span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Species Name</span><span class="st">`</span>, Area) <span class="sc">|&gt;</span></span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_caught =</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Number Caught</span><span class="st">`</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="st">`</span><span class="at">Species Name</span><span class="st">`</span>, <span class="fu">desc</span>(total_caught))</span>
-<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>species_area_catch</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="co"># confirmed to be absent from the original catch records</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>annual_species_catch <span class="ot">&lt;-</span> annual_species_catch <span class="sc">|&gt;</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>(</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="dv">2008</span><span class="sc">:</span><span class="dv">2017</span>,</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Species Name</span><span class="st">`</span> <span class="ot">=</span> top_species,</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="fu">list</span>(<span class="at">total_caught =</span> <span class="dv">0</span>))</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>annual_species_catch</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate annual catch of top species by management area</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>species_area_year <span class="ot">&lt;-</span> shark_data <span class="sc">|&gt;</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Species Name</span><span class="st">`</span> <span class="sc">%in%</span> top_species) <span class="sc">|&gt;</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, Area, <span class="st">`</span><span class="at">Species Name</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_caught =</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Number Caught</span><span class="st">`</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>species_area_year</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarise catch of top species by management area</span></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>species_area_catch <span class="ot">&lt;-</span> shark_data <span class="sc">|&gt;</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Species Name</span><span class="st">`</span> <span class="sc">%in%</span> top_species) <span class="sc">|&gt;</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Species Name</span><span class="st">`</span>, Area) <span class="sc">|&gt;</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_caught =</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">Number Caught</span><span class="st">`</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="st">`</span><span class="at">Species Name</span><span class="st">`</span>, <span class="fu">desc</span>(total_caught))</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>species_area_catch</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
@@ -3183,7 +3193,7 @@ vertical-align: -.125em;
 </div>
 </div>
 </div>
-<p>Figure 2. Annual catch of the five most frequently caught species recorded in the Queensland Shark Control Program dataset between 2008 and 2017, separated by management area. Points represent the total number of individuals caught within each area and year, with lines showing temporal patterns in catch. For each species, management areas contributing at least 10% of the species’ total catch across the study period are displayed separately, while areas contributing less than 10% are combined as “Other areas”. Note that y-axis scales differ among species to accommodate substantial differences in catch magnitude. Cownose rays had the highest overall catch and were predominantly caught on the Gold Coast, whereas catches of other species showed different spatial and temporal patterns.</p>
+<p>Figure 2. Annual catch of the five most frequently caught non-target species in the Queensland Shark Control Program (2008–2017), separated by management area. Points and lines represent annual catch totals and temporal trends. Areas contributing less than 10% of each species’ total catch are grouped as “Other areas”. Y-axis scales differ between species to accommodate differences in catch magnitude.</p>
 </section>
 </section>
 <section id="part-3-report-writing" class="level3">
@@ -3191,8 +3201,14 @@ vertical-align: -.125em;
 <section id="management-interpretation-and-recommendation" class="level4">
 <h4 class="anchored" data-anchor-id="management-interpretation-and-recommendation">Management Interpretation and Recommendation</h4>
 <p>The analysis indicates that non-target catch in the Queensland Shark Control Program was unevenly distributed among species, management areas and years between 2008 and 2017. Cownose rays had the highest total catch among the five most frequently caught non-target species, with catches strongly concentrated on the Gold Coast and a pronounced peak in 2009. Other species showed different spatial patterns, including catfish catches concentrated in Townsville and loggerhead turtle catches distributed across several management areas. These patterns demonstrate that non-target capture is not consistent across the Queensland coast and that particular species–area combinations may contribute disproportionately to overall bycatch.</p>
-<p>Monitoring and bycatch mitigation efforts should prioritise species and management areas with consistently high or periodically elevated non-target catches, rather than applying a uniform approach across all Shark Control Program locations. In particular, the concentration of cownose ray catches on the Gold Coast and catfish catches in Townsville suggests that area-specific patterns warrant further investigation. For conservation sensitive species such as marine turtles and dolphins, continued monitoring of spatial and temporal catch patterns could help identify locations or periods where targeted mitigation measures may be most effective. These catch data should be interpreted alongside information on fishing effort, gear deployment and species abundance before concluding that differences in catch represent differences in population-level risk.</p>
+<p>Monitoring and bycatch mitigation efforts should prioritise species and management areas with consistently high or periodically elevated non-target catches, rather than applying a uniform approach across all Shark Control Program locations. In particular, the concentration of cownose ray catches on the Gold Coast and catfish catches in Townsville suggests that area-specific patterns warrant further investigation. Future analyses should incorporate fishing effort and gear deployment data to calculate catch per unit effort (CPUE), allowing more meaningful comparisons between management areas and years. These findings should also be considered alongside species abundance and conservation status before drawing conclusions about population-level risk.</p>
 </section>
+</section>
+<section id="workshop-reflection" class="level3">
+<h3 class="anchored" data-anchor-id="workshop-reflection">Workshop Reflection</h3>
+<p>This workshop helped me develop a more critical understanding of scientific data visualisation and the importance of presenting ecological information clearly. Reconstructing a published figure on sea turtle bycatch encouraged me to consider aspects of figure design that I had previously paid less attention to, such as colour accessibility, axis scaling and the effective use of labels and legends. I learned that producing a scientifically useful figure involves more than simply displaying data; it also requires considering how different design choices influence the reader’s interpretation.</p>
+<p>I particularly enjoyed working with the Queensland Shark Control Program dataset as the exercise directly related to my interests in marine conservation and the ecological impacts of fisheries. Working with real-world data provided an opportunity to apply and build on my data wrangling skills while investigating patterns in non-target species catches. It also highlighted the importance of interpreting catch data carefully, particularly when considering how differences in fishing effort may influence observed trends.</p>
+<p>Overall, this workshop strengthened my confidence in using R to communicate ecological findings and demonstrated how data visualisation can support evidence-based conservation and management decisions. It also encouraged me to think more critically about the figures I encounter in scientific literature and how I might improve their presentation in my own research.</p>
 </section>
 </section>
 
