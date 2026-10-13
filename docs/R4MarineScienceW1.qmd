@@ -2,6 +2,9 @@
 title: "Workshop 1: Data Cleaning"
 subtitle: "MB5370 R4MarineScience"
 author: "Kylar Duffy"
+format:
+  html:
+    embed-resources: true
 ---
 
 ## Overview
