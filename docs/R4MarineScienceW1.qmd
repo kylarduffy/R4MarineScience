@@ -8,6 +8,7 @@ format:
 ---
 
 ## Overview
+This workshop introduced the foundations of data wrangling and visualisation in R, with an emphasis on using tidyverse to explore, manipulate and summarise ecological datasets. Using the Palmer Penguins dataset, functions such as filter(), mutate(), group_by() and summarise() were used to investigate variation in penguin body mass across species and islands. Then ggplot2 and knitr were used to produce scientifically appropriate figures and formatted summary tables, including comparisons of standard deviation and standard error to explore how different measures of variability influence the presentation and interpretation of ecological data.
 
 ```{r}
 #| message: false
