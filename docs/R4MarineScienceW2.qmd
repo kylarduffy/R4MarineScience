@@ -43,10 +43,11 @@ clean_metadata <- island_metadata |> # create new object
   )
 
 # Display cleaned metadata as a formatted table
-knitr::kable(
-  clean_metadata,
-  caption = "Cleaned island metadata following standardisation of island names and installation dates"
-)
+clean_metadata |>
+  rename_with(~ str_to_title(str_replace_all(.x, "_", " "))) |>
+  knitr::kable(
+    caption = "Cleaned island metadata following standardisation of island names and installation dates"
+  )
 ```
 
 ## Exercise 2: The Relational Join
@@ -65,11 +66,13 @@ penguins_spatial <- penguins |>
   )
 
 # Display the first six rows as a formatted table
-knitr::kable(
-  head(penguins_spatial),
-  caption = "Preview of the penguin dataset combined with cleaned island metadata",
-  digits = 2
-)
+penguins_spatial |>
+  head() |>
+  rename_with(~ str_to_title(str_replace_all(.x, "_", " "))) |>
+  knitr::kable(
+    caption = "Preview of the penguin dataset combined with cleaned island metadata",
+    digits = 2
+  )
 ```
 
 ## Exercise 3: The Wide Summary Matrix
@@ -84,6 +87,7 @@ knitr::kable(
 penguins_spatial |>
   drop_na(body_mass_g) |>
   head() |>
+  rename_with(~ str_to_title(str_replace_all(.x, "_", " "))) |>
   knitr::kable(
     caption = "Preview of penguin records after removing missing body mass values",
     digits = 2
@@ -103,12 +107,13 @@ max_mass_table <- penguins_spatial |>
   )
 
 # Display the maximum body mass table
-knitr::kable(
-  max_mass_table,
-  caption = "Maximum penguin body mass (g) by species and island",
-  digits = 0,
-  na = "—"
-)
+max_mass_table |>
+  rename_with(~ str_to_title(str_replace_all(.x, "_", " "))) |>
+  knitr::kable(
+    caption = "Maximum penguin body mass (g) by species and island",
+    digits = 0,
+    na = "—"
+  )
 ```
 
 # Keystone Exercise: Estuary Fish Survey - Data Rescue Mission
@@ -282,13 +287,19 @@ sum(is.na(master_data$count)) # check
 ```{r}
 #| echo: true
 #| code-fold: true
-#| label: tbl-clean-master
-#| tbl-cap: "Preview of the cleaned estuary fish survey dataset"
 
 # Display the first six rows of the completed master dataset
 master_data |>
   head(6) |>
-  knitr::kable(digits = 2)
+  mutate(
+    site = str_to_title(str_replace_all(site, "_", " ")),
+    scientific_name = str_to_sentence(str_replace_all(scientific_name, "_", " "))
+  ) |>
+  rename_with(~ str_to_title(str_replace_all(.x, "_", " "))) |>
+  knitr::kable(
+    caption = "Preview of the cleaned estuary fish survey dataset",
+    digits = 2
+  )
 ```
 
 ## Phase 4: Statistical Extraction
