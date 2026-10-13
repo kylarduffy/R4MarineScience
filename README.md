@@ -1,16 +1,14 @@
-# R4MarineScience Workshops
+# Module 1: R4MarineScience
 
-This repository contains workshop exercises and practical activities completed as part of the R4MarineScience Module.
-
-The workshops focus on developing practical skills in R programming, data management, statistical analysis and visualisation with applications to marine and ecological datasets.
+This contains the workshop exercises and practical activities completed as part of the R4MarineScience Module. The workshops focus on developing practical skills in R programming, data management, statistical analysis and visualisation with applications to marine and ecological datasets.
 
 ## Repository Contents
 
-Each workshop includes R scripts and/or Quarto documents (.qmd) demonstrating the application of programming and data analysis techniques. The repository also contains
+Each workshop includes R scripts and/or Quarto documents (.qmd) demonstrating the application of programming and data analysis techniques. The repository also contains:
 - supporting datasets
 - summary tables
 - figures
-- endered HTML reports
+- rendered HTML reports
 
 ## Skills and Learning Objectives
 
