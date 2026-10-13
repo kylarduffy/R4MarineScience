@@ -76,6 +76,7 @@ penguins |>
 #| code-fold: true
 #| fig-width: 8
 #| fig-height: 5
+#| fig-cap: "Mean body mass (g) of Adelie, Chinstrap and Gentoo penguins across three islands in the Palmer Archipelago. Points represent group means and error bars indicate ±1 standard deviation (SD)."
 mass_compare_plot <- penguins |>
   group_by(species, island) |>
   summarise(
@@ -123,6 +124,19 @@ mass_compare_plot
 #| echo: true
 #| code-fold: true
 
+mass_compare_plot2 <- penguins |> 
+  group_by(species, island) |>
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    sd_mass = sd(body_mass_g, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |> 
+  mutate(
+    se_mass = sd_mass / sqrt(n)
+  )
+
+
 knitr::kable(
   mass_compare_plot2,
   caption = "Summary of penguin body mass by species and island",
@@ -147,17 +161,7 @@ knitr::kable(
 #| code-fold: true
 #| fig-width: 8
 #| fig-height: 5
-mass_compare_plot2 <- penguins |> 
-  group_by(species, island) |>
-  summarise(
-    mean_mass = mean(body_mass_g, na.rm = TRUE),
-    sd_mass = sd(body_mass_g, na.rm = TRUE),
-    n = n(),
-    .groups = "drop"
-  ) |> 
-  mutate(
-    se_mass = sd_mass / sqrt(n)
-  )
+#| fig-cap: "Mean body mass (g) of Adelie, Chinstrap and Gentoo penguins across three islands in the Palmer Archipelago. Points represent group means and error bars indicate ±1 standard error (SE)."
 
 mass_compare_plotSE <- mass_compare_plot2 |>
   ggplot(aes(x = species, y = mean_mass, colour = island)) +
@@ -195,6 +199,13 @@ mass_compare_plotSE
 ```
 
 #### Ecological Interpretation
+The Palmer Penguins dataset revealed clear differences in mean body mass between species. Gentoo penguins had the highest mean body mass (~ 5100g), while Adelie and Chinstrap penguins had similar but lower mean body masses (~ 3700g). Mean body mass was relatively consistent among Adelie penguins across Biscoe, Dream and Torgersen Islands suggesting limited variation in average body size. However, because Chinstrap and Gentoo penguins were only represented on Dream and Biscoe Islands, respectively, species and island effects cannot be fully determined.
 
+Comparing standard deviation and standard error showed how different measures of variability influence the interpretation of ecological data. The wider SD error bars indicate substantial variation in body mass among individual penguins, whereas the narrower SE error bars indicate greater precision in the estimated mean body mass for each species/island group. Although these descriptive patterns suggest differences in body size between species, statistical testing would be required to determine whether the observed differences are statistically significant.
 
 ### Workshop Reflection
+This workshop helped me develop a stronger understanding of the foundations of data wrangling and visualisation in R. Working through the exercises made me  more familiar with the tidyverse workflow, particularly introducing me to using pipes (|>) to connect functions. I also developed a better understanding of how tibbles differ from traditional data frames, particularly in how they display data structures and variable types.
+
+An important part of the learning process was recognising how missing values can affect calculations and understanding why functions such as mean() and sd() require na.rm = TRUE when working with incomplete datasets. Creating visualisations with ggplot2 also helped me understand how individual layers contribute to a figure and how different measures of variability influence the interpretation of ecological data.
+
+Overall, this workshop reinforced the importance of understanding what each line of code is doing rather than copying code and focusing on obtaining the correct output. It also highlighted how careful data exploration, troubleshooting and clear visual communication contribute to reproducible scientific research.
