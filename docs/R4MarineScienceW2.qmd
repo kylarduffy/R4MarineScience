@@ -2,6 +2,9 @@
 title: "Workshop 2: Advanced Data Wrangling: Extracting Ecological Signals From Noisy Systems"
 subtitle: "MB5370 R4MarineScience"
 author: "Kylar Duffy"
+format:
+  html:
+    embed-resources: true
 ---
 
 # Practical Exercises: Penguins, Pivots and Joining Data
