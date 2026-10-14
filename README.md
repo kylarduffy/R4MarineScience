@@ -10,6 +10,17 @@ Each workshop includes R scripts and/or Quarto documents (.qmd) demonstrating th
 - figures
 - rendered HTML reports
 
+## Workshop Overview
+
+Workshop 1: Foundations of Data Science
+Introduction to R programming, data cleaning, statistical summaries and visualisation using the Palmer Penguins dataset.
+
+Workshop 2: Extracting Ecological Signals
+Advanced data wrangling, integration of multiple datasets and investigation of fish abundance along an estuarine salinity gradient.
+
+Workshop 3: Extracting Ecological Signals
+Scientific figure reconstruction, fisheries data analysis and visualisation using Queensland Shark Control Program data.
+
 ## Skills and Learning Objectives
 
 Throughout these workshops, I am developing skills in:
