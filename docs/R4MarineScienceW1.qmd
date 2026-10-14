@@ -1,5 +1,5 @@
 ---
-title: "Workshop 1: Data Cleaning"
+title: "Foundations of Data Science - Wrangling and Plotting"
 subtitle: "MB5370 R4MarineScience"
 author: "Kylar Duffy"
 format:
